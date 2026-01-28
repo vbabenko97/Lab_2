@@ -1,4 +1,4 @@
-# Lab_2
+# Lab 2
 
 Simple C++ console application for managing a small list of students in a university.
 It supports adding sample students, listing them, filtering by faculty or birth year,

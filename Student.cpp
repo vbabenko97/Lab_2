@@ -1,17 +1,17 @@
 #include "Student.h"
 #include <iostream>
 
-void Student::set_surname(string cur_s)
+void Student::set_surname(const std::string& cur_s)
 {
 	surname = cur_s;
 }
 
-void Student::set_name(string cur_n)
+void Student::set_name(const std::string& cur_n)
 {
 	name = cur_n;
 }
 
-void Student::set_patronymic(string cur_pat)
+void Student::set_patronymic(const std::string& cur_pat)
 {
 	patronymic = cur_pat;
 }
@@ -38,17 +38,17 @@ void Student::set_birthday(int cur_bd, int cur_bm, int cur_by)
 	b_year = cur_by;
 }
 
-void Student::set_address(string cur_a)
+void Student::set_address(const std::string& cur_a)
 {
 	address = cur_a;
 }
 
-void Student::set_phone(string cur_ph)
+void Student::set_phone(const std::string& cur_ph)
 {
 	phone = cur_ph;
 }
 
-void Student::set_faculty(string cur_f)
+void Student::set_faculty(const std::string& cur_f)
 {
 	faculty = cur_f;
 }
@@ -60,19 +60,16 @@ void Student::set_course(int cur_c)
 
 void Student::show() const
 {	
-	cout << "Surname: " << surname << endl
-		<< "Name: " << name << endl
-		<< "Patronymic: " << patronymic << endl
-		<< "Date of birth: " << b_day << "." << b_month << "." << b_year << endl
-		<< "Address: " << address << endl
-		<< "Number of phone: " << phone << endl
-		<< "Faculty: " << faculty << endl
-		<< "Course: " << course << endl << endl;
+	std::cout << "Surname: " << surname << std::endl
+		<< "Name: " << name << std::endl
+		<< "Patronymic: " << patronymic << std::endl
+		<< "Date of birth: " << b_day << "." << b_month << "." << b_year << std::endl
+		<< "Address: " << address << std::endl
+		<< "Number of phone: " << phone << std::endl
+		<< "Faculty: " << faculty << std::endl
+		<< "Course: " << course << std::endl << std::endl;
 }
-Student Student::compare(Student* st)
+const Student& Student::compare(const Student& st) const
 {
-	if (st->b_year < this->b_year)
-		return *st;
-	else
-		return *this;
+	return (st.b_year < this->b_year) ? st : *this;
 }

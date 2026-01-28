@@ -1,105 +1,122 @@
 #include "University.h"
 #include <iostream>
-#include "Student.h"
 
-University::University(int size):size(size),count(0)
+University::University(int size): students(static_cast<std::size_t>(size)), size(static_cast<std::size_t>(size)), count(0)
 {
-	this->arr = new Student * [size];
-	for (int i = 0; i < size; i++)
-		this->arr[i] = NULL;
 }
 
 University::~University()
 {
-	for (int i = 0; i < size; i++)
-		delete arr[i];
-	delete[]this->arr;
 }
 
 void University::show()
 {
-	cout << "List of students: " << endl;
-	for (int i = 0; i < this->size; i++)
-		if (this->arr[i] != NULL)
-			this->arr[i]->show();
+	std::cout << "List of students: " << std::endl;
+	for (std::size_t i = 0; i < this->size; i++)
+		if (this->students[i] != nullptr)
+			this->students[i]->show();
 }
 
-void University::add(string cur_s, string cur_n, string cur_pat, int cur_bd, int cur_bm, int cur_by,string cur_a, string cur_ph,string cur_f,int cur_c)
+void University::add(const std::string& cur_s, const std::string& cur_n, const std::string& cur_pat, int cur_bd,
+	int cur_bm, int cur_by, const std::string& cur_a, const std::string& cur_ph, const std::string& cur_f, int cur_c)
 {
-	for (int i = 0; i<size; i++)
-		if (arr[i] == NULL)
+	if (count >= size)
+	{
+			std::cout << "Cannot add more students: capacity reached." << std::endl;
+		return;
+	}
+	for (std::size_t i = 0; i < size; i++)
+	{
+		if (students[i] == nullptr)
 		{
-			this->arr[i] = new Student(cur_s, cur_n, cur_pat, cur_bd, cur_bm, cur_by, cur_a, cur_ph, cur_f, cur_c);
+			students[i] = std::unique_ptr<Student>(
+				new Student(cur_s, cur_n, cur_pat, cur_bd, cur_bm, cur_by, cur_a, cur_ph, cur_f, cur_c));
 			count++;
 			break;
 		}
+	}
 }
 
 void University::remove()
 {
-	int index;
-	cout << "Enter index of object, which you wanna remove: ";
-	cin >> index;
-	for (int i = index; i < this->size; i++)
+	int index_input;
+	std::cout << "Enter index of object, which you wanna remove: ";
+	std::cin >> index_input;
+	if (index_input < 0 || static_cast<std::size_t>(index_input) >= size || students[index_input] == nullptr)
 	{
-		this->arr[i] = this->arr[i + 1];
+		std::cout << "Invalid index." << std::endl;
+		return;
 	}
-	this->size--;
-	cout << endl;
+	const std::size_t index = static_cast<std::size_t>(index_input);
+	for (std::size_t i = index; i + 1 < size; i++)
+	{
+		students[i] = std::move(students[i + 1]);
+	}
+	students[size - 1].reset();
+	count--;
+	std::cout << std::endl;
 }
 
-void University::check_by_faculty(string faculty) 
+void University::check_by_faculty(const std::string& faculty) 
 {
-	cout << "Students sorted by faculty " << faculty << ": " << endl;
-	for (int i = 0; i < this->size; i++)
+	std::cout << "Students sorted by faculty " << faculty << ": " << std::endl;
+	for (std::size_t i = 0; i < this->size; i++)
 	{
-		if (this->arr[i] == NULL)
+		if (this->students[i] == nullptr)
 			continue;
-		if (this->arr[i]->get_faculty() == faculty)
-			this->arr[i]->show();
+		if (this->students[i]->get_faculty() == faculty)
+			this->students[i]->show();
 	}
 }
 
 void University::list_of_students() 
 {
-	int course;
-	cout << "List of all students sorted by course and faculty: " << endl;
-	for (int i = 0; i < this->size; i++)
+	std::cout << "List of all students sorted by course and faculty: " << std::endl;
+	for (std::size_t i = 0; i < this->size; i++)
 	{
-		if (this->arr[i] == NULL)
+		if (this->students[i] == nullptr)
 			continue;
-		course = arr[i]->get_course();
-		cout << "Course " << course << ", ";
-		if (course == arr[i]->get_course())
-			cout << "faculty " << arr[i]->get_faculty() << ": " << arr[i]->get_surname() << " " << arr[i]->get_name() << " " 
-			<< arr[i]->get_patronymic() << ". ";
-		cout << endl;
+		const int course = students[i]->get_course();
+		std::cout << "Course " << course << ", ";
+		std::cout << "faculty " << students[i]->get_faculty() << ": " << students[i]->get_surname() << " "
+			<< students[i]->get_name() << " " << students[i]->get_patronymic() << ". ";
+		std::cout << std::endl;
 	}
-	cout << endl;
+	std::cout << std::endl;
 }
 
 void University::check_by_year(int year) 
 {
-	cout << "Students, born after " << year << ": " << endl;
-	for (int i = 0; i < this->size; i++)
+	std::cout << "Students, born after " << year << ": " << std::endl;
+	for (std::size_t i = 0; i < this->size; i++)
 	{
-		if (this->arr[i] == NULL)
+		if (this->students[i] == nullptr)
 			continue;
-		if (year < this->arr[i]->get_byear())
-			this->arr[i]->show();
+		if (year < this->students[i]->get_byear())
+			this->students[i]->show();
 	}
 }
 void University::compare() 
 {
-	cout << "Enter the indices of objects, which age you wanna compare: " << endl;
+	std::cout << "Enter the indices of objects, which age you wanna compare: " << std::endl;
 	int i, j;
-	cin >> i;
-	cin >> j;
-	if (this->arr[i]->get_byear() == this->arr[j]->get_byear())
-		cout << "These students are the same age" << endl;
+	std::cin >> i;
+	std::cin >> j;
+	if (i < 0 || j < 0 || static_cast<std::size_t>(i) >= size || static_cast<std::size_t>(j) >= size)
+	{
+		std::cout << "Invalid indices." << std::endl;
+		return;
+	}
+	if (students[i] == nullptr || students[j] == nullptr)
+	{
+		std::cout << "Invalid indices." << std::endl;
+		return;
+	}
+	if (this->students[i]->get_byear() == this->students[j]->get_byear())
+		std::cout << "These students are the same age" << std::endl;
 	else
 	{
-		cout << "This student is older:" << endl;
-		this->arr[i]->compare(this->arr[j]).show();
+		std::cout << "This student is older:" << std::endl;
+		this->students[i]->compare(*this->students[j]).show();
 	}
 }

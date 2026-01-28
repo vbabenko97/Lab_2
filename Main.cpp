@@ -1,9 +1,7 @@
-#include <iostream>
 #include "Student.h"
 #include "University.h"
-using namespace std;
 
-void main() 
+int main() 
 {
 	University KPI(5);
 	KPI.add("Babenko","Vitaliy","Olegovich",31,12,1997,"g. Vishnevoe","+380635656379","FBMI",2);
@@ -20,4 +18,5 @@ void main()
 	KPI.remove();
 	KPI.show();
 	KPI.compare();
+	return 0;
 }
